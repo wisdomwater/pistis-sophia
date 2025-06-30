@@ -20,7 +20,7 @@ It is not a scholarly translation, but a spiritual companion—offered as a devo
 
 ## Format
 
-Each chapter from G.R.S. Mead’s translation of *Pistis Sophia* is reinterpreted with:
+Each chapter from [G.R.S. Mead’s translation](http://gnosis.org/library/pistis-sophia/index.htm) of *Pistis Sophia* is reinterpreted with:
 - A retelling of the text in modern, accessible language
 - A commentary of what the passage means to one's spiritual journey
 - Reflections or guiding questions
