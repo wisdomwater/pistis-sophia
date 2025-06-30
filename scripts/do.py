@@ -120,6 +120,21 @@ class Checker:
                 return 1
         return 0
     
+    def check_reflection_bullets(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if self.is_subheader("### Reflection", line, lines, i):
+                if (
+                    lines[i+1].strip() == ""
+                    and lines[i+2].startswith("* ")
+                    and lines[i+3].startswith("* ")
+                    and lines[i+4].startswith("* ")
+                    and len(lines) == i + 5
+                ):
+                    return 0
+        print(f"  ⚠ The reflective bullets are not formatted correctly as 3x '*'")
+        return 1
+
     def is_subheader(self, header, line, lines, i):
         if line.strip() == header:
             if (
