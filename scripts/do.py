@@ -30,7 +30,7 @@ def check_contents():
         num_errors += checker.check(filepath)
     
     if num_errors:
-        print("\n⚠ There were {num_errors} errors")
+        print(f"\n⚠ There were {num_errors} errors")
     else:
         print("\nYay - There are no errors")
     sys.exit(num_errors)
@@ -64,7 +64,7 @@ class Checker:
                 num_errors += check_func(f)
         return num_errors
 
-    re_title = re.compile(r"## Chapter \d — [\w\s]+$")
+    re_title = re.compile(r"## Chapter \d+ — [\w\s\,\:\-\'\?;\.]+$")
 
     def check_title(self, f):
         """
@@ -72,6 +72,8 @@ class Checker:
         """
         title_line = f.readline()
         if not self.re_title.match(title_line):
+            if title_line.startswith(("## Postscript", "## Note of a Scribe")):
+                return 0
             print(f"  ⚠ The title '{title_line}' does not follow the guidelines")
             return 1
         return 0
@@ -82,7 +84,7 @@ class Fixer:
         contents = None
         with open(filepath, encoding="utf-8", errors="ignore") as f:
             contents = f.read()
-            contents = self.fix_title_colons(contents)
+            contents = self.fix_title_separator(contents)
 
         # Sometimes opening the file for writing fails
         attempts = 0
@@ -95,9 +97,14 @@ class Fixer:
                 time.sleep(0.1)
                 attempts += 1
 
-    def fix_title_separators(self, contents):
+    def fix_title_separator(self, contents):
         lines = contents.splitlines()
-        lines[0] = lines[0].replace(" - ", " — ")
+        lines[0] = (
+            lines[0]
+            .replace(" – ", " — ")
+            .replace("’", "'")
+            .replace(" - ", " — ")
+        )
         return "\n".join(lines) + "\n"
 
 
