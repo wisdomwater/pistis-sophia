@@ -103,7 +103,7 @@ class Checker:
         return 1
 
     def is_subheader(self, header, line, lines, i):
-        if line.startswith(header):
+        if line.strip() == header:
             if (
                 lines[i-1].strip() == ""
                 and lines[i-2].strip() == "---"
