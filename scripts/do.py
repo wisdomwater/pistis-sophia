@@ -92,6 +92,7 @@ class Fixer:
         contents = None
         with open(filepath, encoding="utf-8", errors="ignore") as f:
             contents = f.read()
+            contents = self.fix_trailing_whitespace(contents)
             contents = self.fix_title_separator(contents)
 
         # Sometimes opening the file for writing fails
@@ -104,6 +105,10 @@ class Fixer:
             except PermissionError:
                 time.sleep(0.1)
                 attempts += 1
+
+    def fix_trailing_whitespace(self, contents):
+        lines = [x.rstrip() for x in contents.splitlines()]
+        return "\n".join(lines) + "\n"
 
     def fix_title_separator(self, contents):
         lines = contents.splitlines()
