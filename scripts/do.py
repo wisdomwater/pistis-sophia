@@ -104,12 +104,22 @@ class Checker:
     
     def check_for_colonized_headers(self, f):
         lines = f.readlines()
-        for i, line in enumerate(lines):
+        for i, line in enumerate(lines, start=1):
             if ":**" in line:
                 print(f"  ⚠ There is a ':**' on line {i}")
                 return 1
         return 0
+    
+    re_list = re.compile(r"^\d+\.\s")
 
+    def check_for_bold(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines, start=1):
+            if "**" in line and not (line.startswith("**") or self.re_list.match(line)):
+                print(f"  ⚠ There is a bold word on line {i}")
+                return 1
+        return 0
+    
     def is_subheader(self, header, line, lines, i):
         if line.strip() == header:
             if (
