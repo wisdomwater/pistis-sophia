@@ -101,6 +101,14 @@ class Checker:
                 return 0
         print(f"  ⚠ The 'Reflection' section header is not formatted correctly")
         return 1
+    
+    def check_for_colonized_headers(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if ":**" in line:
+                print(f"  ⚠ There is a ':**' on line {i}")
+                return 1
+        return 0
 
     def is_subheader(self, header, line, lines, i):
         if line.strip() == header:
