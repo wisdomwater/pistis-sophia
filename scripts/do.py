@@ -89,18 +89,31 @@ class Checker:
     def check_for_what_it_means(self, f):
         lines = f.readlines()
         for i, line in enumerate(lines):
-            if line.startswith("### What it means"):
-                if (
-                    lines[i-1].strip() == ""
-                    and lines[i-2].strip() == "---"
-                    and lines[i-3].strip() == ""
-                    and lines[i-4].strip() != ""
-                    and lines[i+1].strip() == ""
-                    and lines[i+2].strip() != ""
-                ):
-                    return 0
+            if self.is_subheader("### What it means", line, lines, i):
+                return 0
         print(f"  ⚠ The 'What it means' section header is not formatted correctly")
         return 1
+
+    def check_for_reflection(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if self.is_subheader("### Reflection", line, lines, i):
+                return 0
+        print(f"  ⚠ The 'Reflection' section header is not formatted correctly")
+        return 1
+
+    def is_subheader(self, header, line, lines, i):
+        if line.startswith(header):
+            if (
+                lines[i-1].strip() == ""
+                and lines[i-2].strip() == "---"
+                and lines[i-3].strip() == ""
+                and lines[i-4].strip() != ""
+                and lines[i+1].strip() == ""
+                and lines[i+2].strip() != ""
+            ):
+                return True
+        return False
 
 
 class Fixer:
