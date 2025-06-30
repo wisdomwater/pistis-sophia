@@ -77,6 +77,14 @@ class Checker:
             print(f"  ⚠ The title '{title_line}' does not follow the guidelines")
             return 1
         return 0
+    
+    def check_double_dashes(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines, start=1):
+            if "--" in line and "---" not in line:
+                print(f"  ⚠ There is a double-dash on line {i}")
+                return 1
+        return 0
 
 
 class Fixer:
