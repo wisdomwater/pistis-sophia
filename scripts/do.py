@@ -85,6 +85,22 @@ class Checker:
                 print(f"  ⚠ There is a double-dash on line {i}")
                 return 1
         return 0
+    
+    def check_for_what_it_means(self, f):
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if line.startswith("### What it means"):
+                if (
+                    lines[i-1].strip() == ""
+                    and lines[i-2].strip() == "---"
+                    and lines[i-3].strip() == ""
+                    and lines[i-4].strip() != ""
+                    and lines[i+1].strip() == ""
+                    and lines[i+2].strip() != ""
+                ):
+                    return 0
+        print(f"  ⚠ The 'What it means' section header is not formatted correctly")
+        return 1
 
 
 class Fixer:
