@@ -134,6 +134,20 @@ class Checker:
                     return 0
         print(f"  ⚠ The reflective bullets are not formatted correctly as 3x '*'")
         return 1
+    
+    def check_third_person_questions(self, f):
+        exceptions = [
+            'I am the gnosis of the universe',
+        ]
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if self.is_subheader("### Reflection", line, lines, i):
+                questions = lines[i+2:i+4]
+                for q in questions:
+                    if any(x in q for x in ["I ", " me ", " me?", " me,", " my "]) and not any(x in q for x in exceptions):
+                        print(f"  ⚠ Questions are written in the first person")
+                        return 1
+        return 0    
 
     def is_subheader(self, header, line, lines, i):
         if line.strip() == header:
