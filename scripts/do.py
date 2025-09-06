@@ -19,6 +19,18 @@ def cli():
     pass
 
 
+@cli.command(short_help="Compile into output files")
+@click.option("-p", "--pdf", is_flag=True, help="Generate PDF")
+@click.option("-e", "--epub", is_flag=True, help="Generate ePub")
+def compile(pdf, epub):
+    """
+    Compile into output file formats
+    """
+    all_files = not pdf and not epub
+    compiler = Compiler(pdf, epub, all_files)
+    compiler.compile()
+
+
 @cli.command(short_help="Check chapter contents for mistakes")
 def check_contents():
     """
@@ -42,14 +54,77 @@ def fixup():
     for filepath in all_chapters():
         fixer.fix(filepath)
 
+
 def all_chapters():
-    for root, _, files in os.walk("chapters"):
-        for file in files:
+    for subdir in sorted(os.listdir("chapters")):
+        if not os.path.isdir(os.path.join("chapters", subdir)):
+            continue
+        for file in sorted(os.listdir(os.path.join("chapters", subdir))):
             if not file.endswith(".md"):
                 continue
-            filepath = os.path.join(root, file)
+            filepath = os.path.join("chapters", subdir, file)
             yield filepath
+
+
+class Compiler:
+    book_md = "output/markdown/book.md"
+    book_pdf = "output/pdf/book.pdf"
+    book_epub = "output/epub/book.epub"
+    epub_css = "scripts/epub.css"
+    pagebreak_lua = "scripts/pagebreak.lua"
+
+    def __init__(self, pdf, epub, all_files):
+        self.pdf = pdf
+        self.epub = epub
+        self.all_files = all_files
     
+    def compile(self):
+        self.create_md()
+
+        if self.all_files or self.epub:
+            self.create_epub()
+
+        if self.all_files or self.pdf:
+            self.create_pdf()
+
+    def create_md(self):
+        filename = self.book_md
+        print(f"Creating {filename}")
+        files = [
+            "chapters/foreword.md",
+        ]
+        files.extend(all_chapters())
+        
+        content = ""
+        for file in files:
+            with open(file, encoding="utf-8", errors="ignore") as f:
+                content += f.read()
+                content += "\n::: pagebreak\n:::\n\n"
+        content = content.strip()
+
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w", encoding="utf-8", errors="ignore") as f:
+            f.write(content)
+
+    def create_epub(self):
+        print(f"Creating {self.book_epub}")
+        os.makedirs(os.path.dirname(self.book_epub), exist_ok=True)
+        exit_code = os.system(
+            f"pandoc -o {self.book_epub} {self.book_md} --css {self.epub_css} --lua-filter {self.pagebreak_lua}"
+        )
+        if exit_code != 0:
+            print("Failed to generate epub")
+            sys.exit(1)
+
+    def create_pdf(self):
+        print(f"Creating {self.book_pdf}")
+        os.makedirs(os.path.dirname(self.book_pdf), exist_ok=True)
+        exit_code = os.system(
+            f"pandoc {self.book_md} -o {self.book_pdf} --pdf-engine=xelatex --metadata-file=meta.yaml --template=scripts/my-template.tex"
+        )
+        if exit_code != 0:
+            print("Failed to generate pdf")
+
 
 class Checker:
     def check(self, filepath):
@@ -64,7 +139,7 @@ class Checker:
                 num_errors += check_func(f)
         return num_errors
 
-    re_title = re.compile(r"## Chapter \d+ — [\w\s\,\:\-\'\?;\.]+$")
+    re_title = re.compile(r"# Chapter \d+ — [\w\s\,\:\-\'\?;\.]+$")
 
     def check_title(self, f):
         """
@@ -72,7 +147,7 @@ class Checker:
         """
         title_line = f.readline()
         if not self.re_title.match(title_line):
-            if title_line.startswith(("## Postscript", "## Note of a Scribe")):
+            if title_line.startswith(("# Postscript", "# Note of a Scribe")):
                 return 0
             print(f"  ⚠ The title '{title_line}' does not follow the guidelines")
             return 1
@@ -89,7 +164,7 @@ class Checker:
     def check_for_what_it_means(self, f):
         lines = f.readlines()
         for i, line in enumerate(lines):
-            if self.is_subheader("### What it means", line, lines, i):
+            if self.is_subheader("## What it means", line, lines, i):
                 return 0
         print(f"  ⚠ The 'What it means' section header is not formatted correctly")
         return 1
@@ -97,7 +172,7 @@ class Checker:
     def check_for_reflection(self, f):
         lines = f.readlines()
         for i, line in enumerate(lines):
-            if self.is_subheader("### Reflection", line, lines, i):
+            if self.is_subheader("## Reflection", line, lines, i):
                 return 0
         print(f"  ⚠ The 'Reflection' section header is not formatted correctly")
         return 1
@@ -123,7 +198,7 @@ class Checker:
     def check_reflection_bullets(self, f):
         lines = f.readlines()
         for i, line in enumerate(lines):
-            if self.is_subheader("### Reflection", line, lines, i):
+            if self.is_subheader("## Reflection", line, lines, i):
                 if (
                     lines[i+1].strip() == ""
                     and lines[i+2].startswith("* ")
@@ -141,7 +216,7 @@ class Checker:
         ]
         lines = f.readlines()
         for i, line in enumerate(lines):
-            if self.is_subheader("### Reflection", line, lines, i):
+            if self.is_subheader("## Reflection", line, lines, i):
                 questions = lines[i+2:i+4]
                 for q in questions:
                     if any(x in q for x in ["I ", " me ", " me?", " me,", " my "]) and not any(x in q for x in exceptions):

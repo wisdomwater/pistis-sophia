@@ -1,4 +1,4 @@
-# Pistis Sophia: A Devotional Reimagining
+# Pistis Sophia: A Modern Retelling and Devotional Guide
 
 This project is a modern, devotional interpretation of the ancient Gnostic text *Pistis Sophia*. It seeks to bring the profound spiritual journey of Sophia—the soul's descent into chaos and her redemption through divine light—into language and imagery accessible to the 21st-century seeker.
 

@@ -1,0 +1,97 @@
+---
+title: "Pistis Sophia"
+subtitle: "A Modern Retelling and Devotional Guide"
+author:
+  - "Michael Collins"
+publisher: ""
+date: 2025-09-05
+lang: en
+
+# Engine & class
+documentclass: scrbook
+classoption:
+  - oneside           # change to 'twoside' for print signatures
+fontsize: 11pt
+
+# Page size & margins (6x9 in)
+geometry:
+  - paperwidth=6in
+  - paperheight=9in
+  - inner=1in
+  - outer=0.85in
+  - top=1in
+  - bottom=1.2in
+  - headheight=14pt
+  - headsep=18pt
+  - footskip=24pt
+
+# Fonts (make sure these are installed; swap to any you like)
+mainfont: "Latin Modern Roman"
+sansfont: "Latin Modern Sans"
+monofont: "Latin Modern Mono"
+
+# Spacing & layout
+linestretch: 1.15
+numbersections: false
+secnumdepth: -1
+toc: true
+toc-depth: 0
+
+# Links & metadata
+colorlinks: true
+linkcolor: "MidnightBlue"
+citecolor: "MidnightBlue"
+urlcolor: "MidnightBlue"
+
+# Code highlighting (choose: tango, kate, pygments, espresso, breezedark, etc.)
+highlight-style: tango
+
+# Page breaks
+header-includes:
+  - |
+    ```{=latex}
+    % 1) Turn off numbering logic
+    \setcounter{secnumdepth}{-1}
+
+    % 2) Remove number printouts in headings (scrbook/KOMA)
+    \renewcommand*{\chapterformat}{}
+    \renewcommand*{\sectionformat}{}
+    \renewcommand*{\subsectionformat}{}
+
+    % 3) Remove numbers from the Table of Contents
+    \makeatletter
+    \renewcommand{\numberline}[1]{}
+    \makeatother
+    ```
+  - |
+    ```{=html}
+    <style>
+      /* Enable page breaks */
+      .pagebreak { page-break-before: always; break-before: page; }
+      @media print { .pagebreak { break-before: page; } }
+      
+      /* Hide numbers injected into headings and TOC by Pandoc's HTML templates */
+      .header-section-number,
+      .toc-section-number {
+        display: none !important;
+      }
+
+      /* Safety for any CSS counter-based numbering */
+      #TOC, nav#TOC, .toc, #toc {
+        counter-reset: none !important;
+      }
+      #TOC li::marker,
+      nav#TOC li::marker {
+        content: "" !important;
+      }
+    </style>
+    ```
+
+# If you use citations:
+# bibliography: refs.bib
+# csl: chicago-author-date.csl
+
+# Optional: front/back matter files (PDF-only LaTeX files)
+# include-before-body: frontmatter.tex
+# include-after-body: backmatter.tex
+---

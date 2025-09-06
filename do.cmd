@@ -10,7 +10,7 @@ set activate=%venv%\Scripts\activate.bat
 :setup
     if "%~1" neq "setup" goto end_setup
     echo Setting up virtual environment
-    python -m venv %venv%
+    if not exist %venv% python -m venv %venv%
     if not exist %venv% exit /b 1
     echo Activating the virtual environment
     call %activate% || exit /b 1
