@@ -110,7 +110,7 @@ class Compiler:
         print(f"Creating {self.book_epub}")
         os.makedirs(os.path.dirname(self.book_epub), exist_ok=True)
         exit_code = os.system(
-            f"pandoc -o {self.book_epub} {self.book_md} --css {self.epub_css} --lua-filter {self.pagebreak_lua}"
+            f"pandoc chapters\\title.md {self.book_md} -o {self.book_epub} --css {self.epub_css} --lua-filter {self.pagebreak_lua}"
         )
         if exit_code != 0:
             print("Failed to generate epub")
