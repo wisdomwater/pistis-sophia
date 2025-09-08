@@ -10,4 +10,4 @@ Let this work be a lantern for your path, illuminating the hidden Light within y
 
 With warmth and blessing,
 
-Michael Collins
+Michael
