@@ -35,7 +35,7 @@ linestretch: 1.15
 numbersections: false
 secnumdepth: -1
 toc: true
-toc-depth: 0
+toc-depth: 1
 
 # Links & metadata
 colorlinks: true
